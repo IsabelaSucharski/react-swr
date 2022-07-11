@@ -3,25 +3,27 @@ import useSWR from "swr";
 import { fetcher } from "../api";
 
 export async function getStaticProps({ params }: any) {
-  const { getProductById } = require("../api/product/[id]");
+  const url = `http://localhost:3000/api/product/${params.id}`;
 
-  const { data } = useSWR(getProductById(params.id), fetcher);
-  console.log(data);
+  const { product } = await fetch(url).then((res) => {
+    return res.json();
+  });
 
   return {
     props: {
-      data,
+      product,
     },
     revalidate: 1000,
   };
 }
 
 export async function getStaticPaths() {
-  const { getProducts } = require("../api/products");
+  const url = "http://localhost:3000/api/products";
+  const { products } = await fetch(url).then((res) => {
+    return res.json();
+  });
 
-  const { data } = useSWR(getProducts, fetcher);
-
-  const paths = data?.map((p: { id: any }) => {
+  const paths = products.map((p: { id: any }) => {
     return {
       params: {
         id: p.id.toString(),
@@ -35,14 +37,23 @@ export async function getStaticPaths() {
   };
 }
 
-const products = (props: any) => {
+const productsById = ({ product }: any) => {
+  const url = `http://localhost:3000/api/product/${product.id}`;
+
+  const { data, error } = useSWR(url, fetcher);
+
+  if (error) return <>error</>;
+  if (!data) return <>Loading...</>;
+
   return (
-    <div>
-      oi
+    <>
       <h1>Detalhes</h1>
-      {props.data}
-    </div>
+      <p>{product.title}</p>
+      <p>{product.description}</p>
+      <p>{product.category}</p>
+      <p>{product.price}</p>
+    </>
   );
 };
 
-export default products;
+export default productsById;

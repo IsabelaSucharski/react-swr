@@ -4,10 +4,7 @@ import { getProductById } from "../../lib/db";
 
 export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
   res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate");
-
-  const { id } = req.query;
-
-  const product = await getProductById({ id });
+  const product = await getProductById(req.query.id);
 
   res.status(200).json({ product });
 };

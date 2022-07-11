@@ -8,7 +8,7 @@ export async function getStaticProps() {
   return {
     props: {
       fallback: {
-        "api/handler": products,
+        "api/products": products,
       },
     },
     revalidate: 10,
@@ -16,13 +16,11 @@ export async function getStaticProps() {
 }
 
 export default function products({ fallback }: any) {
-  const products = fallback[`api/handler`].sort(
+  const products = fallback[`api/products`].sort(
       (a: { rating: { rate: number } }, b: { rating: { rate: number } }) =>
         b.rating.rate - a.rating.rate
     )
     .slice(0, 10);
-
-  console.log(fallback);
 
   return (
     <SWRConfig value={{ fallback }}>

@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import useSWR from "swr";
 import { fetcher } from "../api";
+import { formatNumbers } from "../helper";
+import { Container, ContainerDetalhes, Text, Title } from "../styles";
 
 export async function getStaticProps({ params }: any) {
   const url = `http://localhost:3000/api/product/${params.id}`;
@@ -13,7 +15,7 @@ export async function getStaticProps({ params }: any) {
     props: {
       product,
     },
-    revalidate: 1000,
+    revalidate: 10,
   };
 }
 
@@ -46,13 +48,21 @@ const productsById = ({ product }: any) => {
   if (!data) return <>Loading...</>;
 
   return (
-    <>
-      <h1>Detalhes</h1>
-      <p>{product.title}</p>
-      <p>{product.description}</p>
-      <p>{product.category}</p>
-      <p>{product.price}</p>
-    </>
+    <Container>
+      <ContainerDetalhes>
+        <div>
+          <Title>Detalhes</Title>
+          <Text>Título:</Text>
+          <p>{product.title}</p>
+          <Text>Descrição:</Text>
+          <p>{product.description}</p>
+          <Text>Categoria:</Text>
+          <p>{product.category}</p>
+          <Text>Preço:</Text>
+          <p>{formatNumbers(product.price)}</p>
+        </div>
+      </ContainerDetalhes>
+    </Container>
   );
 };
 
